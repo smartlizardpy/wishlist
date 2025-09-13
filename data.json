@@ -1,0 +1,68 @@
+[
+  {
+    "name": "Sapphire PULSE Radeon RX 580 8GB (11265-05-20G)",
+    "price": 69.00,
+    "note": "Solid dual-fan RX 580 for 1080p screen recording + camera PiP edits.",
+    "seller": "Amazon UK",
+    "link": "https://www.amazon.co.uk/dp/B071CQ5LRV",
+    "images": ["https://m.media-amazon.com/images/I/61EsTrsJZ5L._AC_UY436_QL65_.jpg"],
+    "bought": false,
+    "quantity": 1,
+    "urgent": false
+  },
+  {
+    "name": "ViewSonic VA240-H Frameless 24 inch Monitor, Full HD 1080p, 100hz, 4ms, IPS, HDMI, VGA, LED Monitor for Home, Office, Workstation",
+    "price": 76.00,
+    "note": "Cheap Quality 1080p 100Hz IPS Monitor",
+    "seller": "Amazon UK",
+    "link": "https://www.amazon.co.uk/ViewSonic-VA240-H-Frameless-SuperClear-Monitor/dp/B0CQXBV588",
+    "images": ["https://m.media-amazon.com/images/I/51+s2C7-jYL._AC_UY436_QL65_.jpg"],
+    "bought": false,
+    "quantity": 2,
+    "urgent": true
+  },
+  {
+    "name": "Nersligek 4K DisplayPort to HDMI Cable 2M, DP to HDMI Male UHD 4K@30Hz/2K@60/1080P@120 Nylon DP to HDTV Uni-Directional",
+    "price": 6.99,
+    "note": "Cable to connect GPU to Monitor",
+    "seller": "Amazon UK",
+    "link": "https://www.amazon.co.uk/Nersligek-DisplayPort-Uni-Directional-Projector-ThinkPad-Gray/dp/B0F5Q3LYW8",
+    "images": ["https://m.media-amazon.com/images/I/61Z1VfFhXgL._AC_UY436_QL65_.jpg"],
+    "bought": false,
+    "quantity": 2,
+    "urgent": true
+  },
+  {
+    "name": "KingSpec Internal Computer SSD White-Collar Game Player",
+    "price": 41.79,
+    "note": "",
+    "seller": "Amazon UK",
+    "link": "https://www.amazon.co.uk/KingSpec-Internal-Computer-White-Collar-Game-Player/dp/B0B2K51BHH?crid=1L9V7B3SVNQWL",
+    "images": ["https://m.media-amazon.com/images/I/617eri7XTRL._AC_UY436_QL65_.jpg"],
+    "bought": false,
+    "quantity": 2,
+    "urgent": true
+  },
+  {
+    "name": "ARCTIC MX-4 (4 g) - Premium Performance Thermal Paste for all processors (CPU, GPU - PC, PS4, XBOX)",
+    "price": 5.49,
+    "note": "Very high thermal conductivity, long durability, safe application, non-conductive, non-capacitive",
+    "seller": "Amazon UK",
+    "link": "https://www.amazon.co.uk/dp/B07L9BDY3T",
+    "images": ["https://m.media-amazon.com/images/I/51fVtU+cDIL._AC_UY436_QL65_.jpg"],
+    "bought": false,
+    "quantity": 2,
+    "urgent": true
+  },
+  {
+    "name": "Kisnt Wireless Mechanical Keyboard, Creamy Sound Board, Gaming Keyboard with Bluetooth/2.4GHz/USB-C, 75% 85 Keys, Customized Hot Swappable Compact Keyboard for Win/Mac",
+    "price": 57.31,
+    "note": "Amazon's Choice for 'kisnt keyboard', 4.7 out of 5 stars (302 ratings), Brand: Kisnt",
+    "seller": "Amazon UK",
+    "link": "https://www.amazon.co.uk/dp/B0C6J6ZK2N",
+    "images": ["https://m.media-amazon.com/images/I/61YdGCfiwEL._AC_UY436_QL65_.jpg"],
+    "bought": false,
+    "quantity": 1,
+    "urgent": true
+  }
+]

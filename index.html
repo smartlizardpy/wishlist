@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ozan's wishlist</title>
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --card-color: #2b2b2b;
+            --header-color: #222;
+            --text-color: #f0f0f0;
+            --text-muted-color: #aaa;
+            --accent-color: #007bff;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --grey-color: #6c757d;
+            --shadow-color: rgba(0, 0, 0, 0.4);
+            --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-stack);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding-top: 70px; /* Space for sticky header */
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: var(--header-color);
+            border-bottom: 1px solid #333;
+            z-index: 1000;
+            box-shadow: 0 2px 10px var(--shadow-color);
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-title img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .header-title span {
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        #item-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: var(--card-color);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px var(--shadow-color);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+            position: relative;
+            border: 2px solid transparent;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px var(--shadow-color);
+        }
+        
+        .card[data-bought="true"] .card-image-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(2px);
+        }
+
+        .card-image-container {
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .bought-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.8em;
+            font-weight: bold;
+            z-index: 2;
+        }
+
+        .urgent-tag {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.8em;
+            font-weight: bold;
+            background-color: var(--danger-color);
+            color: white;
+            z-index: 2;
+        }
+
+        .bought-badge.bought {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .bought-badge.not-bought {
+            background-color: var(--grey-color);
+            color: white;
+        }
+
+        .card-content {
+            padding: 15px;
+        }
+
+        .card-name {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin: 0 0 10px;
+        }
+
+        .card-price {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-quantity {
+            font-size: 0.9em;
+            font-weight: normal;
+            color: var(--text-muted-color);
+            background-color: #333;
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+
+        .card-note {
+            font-size: 0.9em;
+            color: var(--text-muted-color);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: var(--card-color);
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px var(--shadow-color);
+            position: relative;
+        }
+
+        .close-btn {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: white;
+        }
+
+        /* Gallery Modal */
+        .gallery-modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .gallery-modal-body {
+                flex-direction: row;
+            }
+        }
+
+        .gallery-main-image {
+            flex: 3;
+        }
+
+        .gallery-main-image img {
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        .gallery-thumbnails {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .gallery-thumbnails img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .gallery-thumbnails img.active {
+            border-color: var(--accent-color);
+        }
+
+        .gallery-info {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .gallery-info h2 { margin-top: 0; }
+        .gallery-info .price { font-size: 1.5em; font-weight: bold; color: var(--accent-color); }
+        .gallery-info .seller { margin: 10px 0; }
+        .gallery-info .quantity { margin-bottom: 10px; font-style: italic; color: var(--text-muted-color); }
+        .gallery-info .urgent { margin-bottom: 10px; font-weight: bold; color: var(--danger-color); }
+        .gallery-info .note { color: var(--text-muted-color); flex-grow: 1; }
+
+        .gallery-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .gallery-actions button, .gallery-actions a {
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 1em;
+            cursor: pointer;
+            border: none;
+        }
+
+        .seller-link {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        #toggle-bought-btn {
+            background-color: var(--grey-color);
+            color: white;
+        }
+        
+        #toggle-bought-btn.bought {
+            background-color: var(--success-color);
+        }
+
+        /* Toast Notifications */
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background-color: var(--card-color);
+            color: var(--text-color);
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px var(--shadow-color);
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            transform: translateY(20px);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background-color: white;
+                color: black;
+                padding-top: 0;
+            }
+            .header, .modal, #toast-container {
+                display: none;
+            }
+            #item-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+                padding: 0;
+            }
+            .card {
+                box-shadow: none;
+                border: 1px solid #ccc;
+                page-break-inside: avoid;
+            }
+            .card-content, .card-note, .card-price, .bought-badge {
+                color: black;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-title">
+            <img src="https://avatars.githubusercontent.com/u/154686525?v=4" alt="Ozan's avatar">
+            <span>ozan’s wishlist</span>
+        </div>
+    </header>
+
+    <main id="item-grid"></main>
+
+    <!-- Image Gallery Modal -->
+    <div id="gallery-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <div class="gallery-modal-body">
+                <div class="gallery-main-image">
+                    <img id="gallery-hero-img" src="" alt="Main product image">
+                    <div class="gallery-thumbnails" id="gallery-thumbnails-container"></div>
+                </div>
+                <div class="gallery-info">
+                    <h2 id="gallery-name"></h2>
+                    <div id="gallery-price" class="price"></div>
+                    <div id="gallery-seller" class="seller"></div>
+                    <div id="gallery-quantity" class="quantity"></div>
+                    <div id="gallery-urgent" class="urgent"></div>
+                    <p id="gallery-note" class="note"></p>
+                    <div class="gallery-actions">
+                        <a id="gallery-seller-link" href="#" target="_blank" class="seller-link">Go to seller</a>
+                        <button id="copy-link-btn">🔗 Copy Link</button>
+                        <button id="toggle-bought-btn"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" aria-live="polite"></div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        localStorage.clear();
+        const STORAGE_KEY = 'wishlist.v1';
+        let items = [];
+        let activeItemId = null;
+
+        // DOM Elements
+        const grid = document.getElementById('item-grid');
+        const galleryModal = document.getElementById('gallery-modal');
+
+        function loadItemsAndRender() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            if (data && data !== '[]') {
+                try {
+                    items = JSON.parse(data);
+                    renderItems();
+                    showToast('Loaded wishlist from memory.');
+                } catch (e) {
+                    fetchAndSetInitialData();
+                }
+            } else {
+                fetchAndSetInitialData();
+            }
+        }
+        
+        function fetchAndSetInitialData() {
+            fetch('data.json')
+                .then(res => {
+                    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                    return res.json();
+                })
+                .then(initialData => {
+                    items = initialData;
+                    saveItems();
+                    renderItems();
+                    showToast('Loaded wishlist from data.json!');
+                })
+                .catch(err => {
+                    showToast('Error: Could not load data.json.');
+                    console.error("Fetch error:", err);
+                });
+        }
+
+        function saveItems() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+        }
+
+        function renderItems() {
+            grid.innerHTML = '';
+            items.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.id = index;
+                card.dataset.bought = item.bought;
+                card.tabIndex = 0;
+
+                card.innerHTML = `
+                    ${item.urgent ? `<div class="urgent-tag">Urgent</div>` : ''}
+                    <div class="bought-badge ${item.bought ? 'bought' : 'not-bought'}">${item.bought ? 'Bought' : 'Not Bought'}</div>
+                    <div class="card-image-container">
+                        <img src="${item.images[0] || ''}" alt="${item.name}" class="card-image" loading="lazy">
+                    </div>
+                    <div class="card-content">
+                        <div class="card-price">
+                            <span>£${parseFloat(item.price).toFixed(2)}</span>
+                            ${item.quantity > 1 ? `<span class="card-quantity">x${item.quantity}</span>` : ''}
+                        </div>
+                        <h3 class="card-name">${item.name}</h3>
+                        <p class="card-note">${item.note}</p>
+                    </div>
+                `;
+                card.addEventListener('click', () => openGalleryModal(index));
+                card.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') openGalleryModal(index);
+                });
+                grid.appendChild(card);
+            });
+        }
+
+        function openGalleryModal(index) {
+            activeItemId = index;
+            const item = items[index];
+            
+            document.getElementById('gallery-hero-img').src = item.images[0];
+            document.getElementById('gallery-name').textContent = item.name;
+            document.getElementById('gallery-price').textContent = `£${parseFloat(item.price).toFixed(2)}`;
+            document.getElementById('gallery-seller').textContent = `Sold by: ${item.seller}`;
+            document.getElementById('gallery-quantity').textContent = item.quantity > 1 ? `Quantity: ${item.quantity}` : '';
+            
+            const urgentEl = document.getElementById('gallery-urgent');
+            if (item.urgent) {
+                urgentEl.textContent = 'Urgent';
+            } else {
+                urgentEl.textContent = '';
+            }
+
+            document.getElementById('gallery-note').textContent = item.note;
+            document.getElementById('gallery-seller-link').href = item.link;
+
+            const thumbnailsContainer = document.getElementById('gallery-thumbnails-container');
+            thumbnailsContainer.innerHTML = '';
+            item.images.forEach((imgSrc, i) => {
+                const img = document.createElement('img');
+                img.src = imgSrc;
+                img.alt = `Thumbnail ${i + 1}`;
+                if (i === 0) img.classList.add('active');
+                img.addEventListener('click', () => {
+                    document.getElementById('gallery-hero-img').src = imgSrc;
+                    thumbnailsContainer.querySelector('.active').classList.remove('active');
+                    img.classList.add('active');
+                });
+                thumbnailsContainer.appendChild(img);
+            });
+            
+            const toggleBtn = document.getElementById('toggle-bought-btn');
+            updateToggleBoughtButton(toggleBtn, item.bought);
+
+            galleryModal.style.display = 'block';
+            galleryModal.querySelector('.close-btn').focus();
+        }
+        
+        function updateToggleBoughtButton(button, isBought) {
+            button.textContent = isBought ? 'Mark as Not Bought' : 'Mark as Bought';
+            button.classList.toggle('bought', isBought);
+        }
+
+        function closeGalleryModal() {
+            galleryModal.style.display = 'none';
+            const card = grid.querySelector(`[data-id='${activeItemId}']`);
+            if (card) card.focus();
+        }
+        
+        function toggleBoughtStatus() {
+            if (activeItemId === null) return;
+            const item = items[activeItemId];
+            item.bought = !item.bought;
+            
+            updateToggleBoughtButton(document.getElementById('toggle-bought-btn'), item.bought);
+            saveItems();
+            renderItems();
+            showToast(`Item marked as ${item.bought ? 'Bought' : 'Not Bought'}.`);
+        }
+
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.addEventListener('transitionend', () => toast.remove());
+            }, 3000);
+        }
+
+        // Event Listeners
+        document.querySelector('#gallery-modal .close-btn').addEventListener('click', closeGalleryModal);
+        window.addEventListener('click', (e) => {
+            if (e.target == galleryModal) closeGalleryModal();
+        });
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeGalleryModal();
+        });
+        document.getElementById('toggle-bought-btn').addEventListener('click', toggleBoughtStatus);
+        document.getElementById('copy-link-btn').addEventListener('click', () => {
+            navigator.clipboard.writeText(document.getElementById('gallery-seller-link').href)
+                .then(() => showToast('Seller link copied!'));
+        });
+
+        // Initial Load
+        loadItemsAndRender();
+    });
+    </script>
+</body>
+</html>
